@@ -16,7 +16,7 @@ var svg = d3.select('#viz').append("svg")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
-data = d3.csv("https://github.com/yagizolmez/uiuc_covid_data_viz/blob/main/illinois_covid_data.csv",
+data = d3.csv("https://github.com/yagizolmez/yagizolmez.github.io/blob/main/illinois_covid_data.csv",
   function(d){
     return {date: d3.timeParse('%c')(d._time),
             uCases: d.undergradCases,
