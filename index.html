@@ -1,4 +1,4 @@
-<html>
+<!DOCTYPE html>
 <body>
 <script src="https://d3js.org/d3.v4.js"></script>
 <div id = "viz"></div>
@@ -16,42 +16,42 @@ var svg = d3.select('#viz').append("svg")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
-data = d3.csv("https://github.com/yagizolmez/yagizolmez.github.io/blob/main/illinois_covid_data.csv",
+d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/illinois_covid_data.csv",
   function(d){
-    return {date: d3.timeParse('%c')(d._time),
+    return {date: d3.timeParse('%a %b %_d %H:%M:%S %Y')(d._time),
             uCases: d.undergradCases,
             uPositivity: d.undergradCases/d.undergradTests*100};
+  },
+  function(data){
+
+    // Add X axis --> it is a date format
+    var x = d3.scaleTime()
+      .domain(d3.extent(data, function(d) {return d.date; }))
+      .range([ 0, width ]);
+    svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+    // Add Y axis
+    var y = d3.scaleLinear()
+      .domain([0, d3.max(data, function(d) { return +d.uCases; })])
+      .range([ height, 0 ]);
+    svg.append("g")
+      .call(d3.axisLeft(y));
+
+    // Add the line
+    svg.append("path")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 1.5)
+      .attr("d", d3.line()
+        .x(function(d) { return x(d.date) })
+        .y(function(d) { return y(d.uCases) })
+        )
+
   }
 );
-
-var fall2020end = d3.timeParse('%m-%d-%Y')('12-16-2020')
-
-fall2020data = data.filter(function(d)
-{return d.date < fall2020end}
-)
-
-var x = d3.scaleTime()
-  .domain(d3.extent(fall2020data,function(d){return d.date;}))
-  .range([0,width]);
-svg.append("g")
-  .attr("transform", "translate(0," + height + ")")
-  .call(d3.axisBottom(x));
-
-var y = d3.scaleLinear()
-  .domain([0,d3.max(fall2020data, function(d) {return +d.value;})])
-  .range([ height, 0 ]);
-svg.append("g")
-  .call(d3.axisLeft(y));
-
-svg.append("path")
-  .datum(fall2020data)
-  .attr("fill", "none")
-  .attr("stroke", "steelblue")
-  .attr("stroke-width", 1.5)
-  .attr("d", d3.line()
-    .x(function(d) { return x(d.date) })
-    .y(function(d) { return y(d.value) })
-    )
 
 </script>
 
