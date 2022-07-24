@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <body>
+
+<label for="sem">Please select a semester (1) Fall 2020, (2) Spring 2021, (3) Fall 2021, (4) Spring 2022: </label>
+<input type = "range" min = 1 max = 4 id = "sem" value = 1 oninput="selected_sem.value = sem.value">
+<output name = "selected_sem" id = "selected_sem">1</output>
+
 <script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js"></script>
 <div id = "viz"></div>
 
 <script>
 
 var margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    width = 1840 - margin.left - margin.right,
+    height = 800 - margin.top - margin.bottom;
 
 var svg = d3.select('#viz').append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -24,34 +30,775 @@ d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/i
   },
   function(data){
 
-    // Add X axis --> it is a date format
-    var x = d3.scaleTime()
-      .domain(d3.extent(data, function(d) {return d.date; }))
-      .range([ 0, width ]);
-    svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+    var fall2020end = d3.timeParse("%m/%d/%Y")("12/16/2020");
+    var spring2021begin = d3.timeParse("%m/%d/%Y")("01/16/2021");
+    var spring2021end = d3.timeParse("%m/%d/%Y")("05/12/2021");
+    var fall2021begin = d3.timeParse("%m/%d/%Y")("08/19/2021");
+    var fall2021end = d3.timeParse("%m/%d/%Y")("12/15/2021");
+    var spring2022begin = d3.timeParse("%m/%d/%Y")("01/11/2022");
+    var spring2022end = d3.timeParse("%m/%d/%Y")("05/12/2022");
 
-    // Add Y axis
-    var y = d3.scaleLinear()
-      .domain([0, d3.max(data, function(d) { return +d.uCases; })])
-      .range([ height, 0 ]);
-    svg.append("g")
-      .call(d3.axisLeft(y));
+    draw("1");
 
-    // Add the line
-    svg.append("path")
-      .datum(data)
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 1.5)
-      .attr("d", d3.line()
-        .x(function(d) { return x(d.date) })
-        .y(function(d) { return y(d.uCases) })
-        )
+    function draw(sem){
 
-  }
-);
+      svg.selectAll('*').remove();
+
+      if(sem == "1"){
+
+        sem_data = data.filter(function(d){return d.date < fall2020end;})
+
+        // Add X axis --> it is a date format
+        var x = d3.scaleTime()
+          .domain(d3.extent(sem_data, function(d) {return d.date; }))
+          .range([ 0, width ]);
+        svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x));
+
+        // Add Y axis
+        var y = d3.scaleLinear()
+          .domain([0, d3.max(sem_data, function(d) { return +d.uCases; })])
+          .range([ height, 0 ]);
+        svg.append("g")
+          .call(d3.axisLeft(y));
+
+        // Add the line
+        svg.append("path")
+          .datum(sem_data)
+          .attr("fill", "none")
+          .attr("stroke", "steelblue")
+          .attr("stroke-width", 1.5)
+          .attr("d", d3.line()
+            .x(function(d) { return x(d.date) })
+            .y(function(d) { return y(d.uCases) })
+            )
+
+        var emergencyOrders = d3.timeParse("%m/%d/%Y")("08/20/2020")
+
+        var emergencyOrdersAnnote = [
+          {
+            note: {
+            label: "The cities of Champaign and Urbana issued emergency orders regarding the use of face coverings, parties, and social gatherings.",
+            title: "Emergency Orders"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(emergencyOrders),
+            y: y(50),
+            dy: -200,
+            dx: 20
+          }
+        ]
+
+        var makeEmergencyAnnotation = d3.annotation()
+                                      .annotations(emergencyOrdersAnnote)
+
+        svg.append("g").call(makeEmergencyAnnotation)
+
+        var fall2020instbegin = d3.timeParse("%m/%d/%Y")("08/24/2020")
+
+        var fall2020instbeginAnnote = [
+          {
+            note: {
+            label: "As students return to campus, infections rise.",
+            title: "Instruction Begins"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(fall2020instbegin),
+            y: y(76),
+            dy: 120,
+            dx: 50
+          }
+        ]
+
+        var makefall2020instbeginAnnotation = d3.annotation()
+                                      .annotations(fall2020instbeginAnnote)
+
+        svg.append("g").call(makefall2020instbeginAnnotation)
+
+        var increasedEnforcement = d3.timeParse("%m/%d/%Y")("09/02/2020")
+
+        var increasedEnforcementAnnote = [
+          {
+            note: {
+            label: "Undergraduate enforcement of COVID-19 guidelines has been increased.",
+            title: "Increased Enforcement"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(increasedEnforcement),
+            y: y(118),
+            dy: -50,
+            dx: 50
+          }
+        ]
+
+        var increasedEnforcementAnnotation = d3.annotation()
+                                      .annotations(increasedEnforcementAnnote)
+
+        svg.append("g").call(increasedEnforcementAnnotation)
+
+        var increasedEnforcement = d3.timeParse("%m/%d/%Y")("09/02/2020")
+
+        var increasedEnforcementAnnote = [
+          {
+            note: {
+            label: "Undergraduate enforcement of COVID-19 guidelines has been increased.",
+            title: "Increased Enforcement"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(increasedEnforcement),
+            y: y(118),
+            dy: -50,
+            dx: 50
+          }
+        ]
+
+        var increasedEnforcementAnnotation = d3.annotation()
+                                      .annotations(increasedEnforcementAnnote)
+
+        svg.append("g").call(increasedEnforcementAnnotation)
+
+        var fallbreakbegins = d3.timeParse("%m/%d/%Y")("11/21/2020")
+
+        var fallbreakbeginsAnnote = [
+          {
+            note: {
+            label: "",
+            title: "Fall Break Begins"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(fallbreakbegins),
+            y: y(11),
+            dy: -100,
+            dx: -50
+          }
+        ]
+
+        var fallbreakbeginsAnnotation = d3.annotation()
+                                      .annotations(fallbreakbeginsAnnote)
+
+        svg.append("g").call(fallbreakbeginsAnnotation)
+
+        var fallbreakends = d3.timeParse("%m/%d/%Y")("11/29/2020")
+
+        var fallbreakendsAnnote = [
+          {
+            note: {
+            label: "",
+            title: "Fall Break Ends"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(fallbreakends),
+            y: y(12),
+            dy: -100,
+            dx: -50
+          }
+        ]
+
+        var fallbreakendsAnnotation = d3.annotation()
+                                      .annotations(fallbreakendsAnnote)
+
+        svg.append("g").call(fallbreakendsAnnotation)
+
+        var fall2020instend = d3.timeParse("%m/%d/%Y")("12/09/2020")
+
+        var fall2020instendAnnote = [
+          {
+            note: {
+            label: "Infections plunge as students leave the campus.",
+            title: "Instruction Ends"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(fall2020instend),
+            y: y(12),
+            dy: -120,
+            dx: -50
+          }
+        ]
+
+        var makefall2020instendAnnotation = d3.annotation()
+                                      .annotations(fall2020instendAnnote)
+
+        svg.append("g").call(makefall2020instendAnnotation)
+
+      }
+
+      else if(sem == "2"){
+
+        sem_data = data.filter(function(d){return (d.date > spring2021begin && d.date < spring2021end);})
+
+        // Add X axis --> it is a date format
+        var x = d3.scaleTime()
+          .domain(d3.extent(sem_data, function(d) {return d.date; }))
+          .range([ 0, width ]);
+        svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x));
+
+        // Add Y axis
+        var y = d3.scaleLinear()
+          .domain([0, d3.max(sem_data, function(d) { return +d.uCases; })])
+          .range([ height, 0 ]);
+        svg.append("g")
+          .call(d3.axisLeft(y));
+
+        // Add the line
+        svg.append("path")
+          .datum(sem_data)
+          .attr("fill", "none")
+          .attr("stroke", "steelblue")
+          .attr("stroke-width", 1.5)
+          .attr("d", d3.line()
+            .x(function(d) { return x(d.date) })
+            .y(function(d) { return y(d.uCases) })
+            )
+
+        var goodSemesterAnnote = [
+          {
+            note: {
+            label: "The infections were much lower this semester compared to Fall 2020. Precautions such as faster test results, limited activity during the move-in period and absence of a highly contagious variant all played a role.",
+            title: "Lower Infections"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["black"],
+            x: 0,
+            y: y(65),
+            dy: 0,
+            dx: 500
+          }
+        ]
+
+        var goodSemesterAnnotation = d3.annotation()
+                                      .annotations(goodSemesterAnnote)
+
+        svg.append("g").call(goodSemesterAnnotation)
+
+
+        var essentialOnly = d3.timeParse("%m/%d/%Y")("01/20/2021")
+
+        var essentialOnlyAnnote = [
+          {
+            note: {
+            label: "The university community is asked to perform only the essential activities until Feb 8th.",
+            title: "Essential Activities Only"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(essentialOnly),
+            y: y(18),
+            dy: -100,
+            dx: 20
+          }
+        ]
+
+        var essentialOnlyAnnotation = d3.annotation()
+                                      .annotations(essentialOnlyAnnote)
+
+        svg.append("g").call(essentialOnlyAnnotation)
+
+        var spring2021instbegin = d3.timeParse("%m/%d/%Y")("01/25/2021")
+
+        var spring2021instbeginAnnote = [
+          {
+            note: {
+            label: "Students are required to test on their return to campus.",
+            title: "Instruction Begins"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(spring2021instbegin),
+            y: y(17),
+            dy: 20,
+            dx: 100
+          }
+        ]
+
+        var spring2021instbeginAnnotation = d3.annotation()
+                                      .annotations(spring2021instbeginAnnote)
+
+        svg.append("g").call(spring2021instbeginAnnotation)
+
+        var singledaybreak = d3.timeParse("%m/%d/%Y")("03/24/2021")
+
+        var singledaybreakAnnote = [
+          {
+            note: {
+            label: "There was no Spring Break this semester. Instead, there were two single day breaks. The other one was on April 13th.",
+            title: "Single Day Break"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(singledaybreak),
+            y: y(5),
+            dy: -50,
+            dx: -50
+          }
+        ]
+
+        var singledaybreakAnnotation = d3.annotation()
+                                      .annotations(singledaybreakAnnote)
+
+        svg.append("g").call(singledaybreakAnnotation)
+
+        var vaccinesavailable = d3.timeParse("%m/%d/%Y")("04/04/2021")
+
+        var vaccinesavailableAnnote = [
+          {
+            note: {
+            label: "Vaccines start to become available for students around this time. However they will not be widely available for some time.",
+            title: "Vaccines Available"
+            },
+            type: d3.annotationCalloutCircle,
+            subject: {
+              radius: 50,
+              radiusPaddling: 20
+            },
+            color: ["red"],
+            x: x(vaccinesavailable),
+            y: y(5),
+            dy: -200,
+            dx: -50
+          }
+        ]
+
+        var vaccinesavailableAnnotation = d3.annotation()
+                                      .annotations(vaccinesavailableAnnote)
+
+        svg.append("g").call(vaccinesavailableAnnotation)
+
+        var spring2021instend = d3.timeParse("%m/%d/%Y")("05/05/2021")
+
+        var spring2021instendAnnote = [
+          {
+            note: {
+            label: "The semester ends before the surge of Delta variant in the US.",
+            title: "Instruction Ends"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(spring2021instend),
+            y: y(2),
+            dy: -50,
+            dx: -50
+          }
+        ]
+
+        var spring2021instendAnnotation = d3.annotation()
+                                      .annotations(spring2021instendAnnote)
+
+        svg.append("g").call(spring2021instendAnnotation)
+
+      }
+      else if(sem == "3"){
+
+        sem_data = data.filter(function(d){return (d.date > fall2021begin && d.date < fall2021end);})
+
+        // Add X axis --> it is a date format
+        var x = d3.scaleTime()
+          .domain(d3.extent(sem_data, function(d) {return d.date; }))
+          .range([ 0, width ]);
+        svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x));
+
+        // Add Y axis
+        var y = d3.scaleLinear()
+          .domain([0, d3.max(sem_data, function(d) { return +d.uCases; })])
+          .range([ height, 0 ]);
+        svg.append("g")
+          .call(d3.axisLeft(y));
+
+        // Add the line
+        svg.append("path")
+          .datum(sem_data)
+          .attr("fill", "none")
+          .attr("stroke", "steelblue")
+          .attr("stroke-width", 1.5)
+          .attr("d", d3.line()
+            .x(function(d) { return x(d.date) })
+            .y(function(d) { return y(d.uCases) })
+            )
+
+        var goodSemesterAnnote = [
+          {
+            note: {
+            label: "Due to the Delta variant and the return to face-to-face instruction, the cases were as high as the previous semester despite the availability of vaccines.",
+            title: "Overview"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["black"],
+            x: 0,
+            y: y(60),
+            dy: 0,
+            dx: 200
+          }
+        ]
+
+        var goodSemesterAnnotation = d3.annotation()
+                                      .annotations(goodSemesterAnnote)
+
+        svg.append("g").call(goodSemesterAnnotation)
+
+        var fall2021instbegin = d3.timeParse("%m/%d/%Y")("08/27/2021")
+
+        var fall2021instbeginAnnote = [
+          {
+            note: {
+            label: "All students, faculty and staff are required to be vaccinated on governor's orders.",
+            title: "Instruction Begins"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(fall2021instbegin),
+            y: y(18),
+            dy: 30,
+            dx: 10
+          }
+        ]
+
+        var fall2021instbeginAnnotation = d3.annotation()
+                                      .annotations(fall2021instbeginAnnote)
+
+        svg.append("g").call(fall2021instbeginAnnotation)
+
+        var mysterious = d3.timeParse("%m/%d/%Y")("11/03/2021")
+
+        var mysteriousAnnote = [
+          {
+            note: {
+            label: "There is no apparent reason for this wave of infections such as a move-in period or a major holiday",
+            title: "A Mysterious Wave"
+            },
+            type: d3.annotationCalloutCircle,
+            subject: {
+              radius: 50,
+              radiusPaddling: 20
+            },
+            color: ["red"],
+            x: x(mysterious),
+            y: y(38),
+            dy: 50,
+            dx: -50
+          }
+        ]
+
+        var mysteriousAnnotation = d3.annotation()
+                                      .annotations(mysteriousAnnote)
+
+        svg.append("g").call(mysteriousAnnotation)
+
+        var fallbreakbegins = d3.timeParse("%m/%d/%Y")("11/20/2021")
+
+        var fallbreakbeginsAnnote = [
+          {
+            note: {
+            label: "",
+            title: "Fall Break Begins"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(fallbreakbegins),
+            y: y(1),
+            dy: -50,
+            dx: 10
+          }
+        ]
+
+        var fallbreakbeginsAnnotation = d3.annotation()
+                                      .annotations(fallbreakbeginsAnnote)
+
+        svg.append("g").call(fallbreakbeginsAnnotation)
+
+        var fallbreakends = d3.timeParse("%m/%d/%Y")("11/28/2021")
+
+        var fallbreakendsAnnote = [
+          {
+            note: {
+            label: "Infections rise following the Thanksgiving Day.",
+            title: "Fall Break Ends"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(fallbreakends),
+            y: y(19),
+            dy: -50,
+            dx: -50
+          }
+        ]
+
+        var fallbreakendsAnnotation = d3.annotation()
+                                      .annotations(fallbreakendsAnnote)
+
+        svg.append("g").call(fallbreakendsAnnotation)
+
+        var fall2021instend = d3.timeParse("%m/%d/%Y")("12/08/2021")
+
+        var fall2021instendAnnote = [
+          {
+            note: {
+            label: "",
+            title: "Instruction Ends"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(fall2021instend),
+            y: y(20),
+            dy: -50,
+            dx: -10
+          }
+        ]
+
+        var fall2021instendAnnotation = d3.annotation()
+                                      .annotations(fall2021instendAnnote)
+
+        svg.append("g").call(fall2021instendAnnotation)
+
+      }
+
+      else if(sem == "4"){
+
+        sem_data = data.filter(function(d){return (d.date > spring2022begin && d.date < spring2022end);})
+
+        // Add X axis --> it is a date format
+        var x = d3.scaleTime()
+          .domain(d3.extent(sem_data, function(d) {return d.date; }))
+          .range([ 0, width ]);
+        svg.append("g")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x));
+
+        // Add Y axis
+        var y = d3.scaleLinear()
+          .domain([0, d3.max(sem_data, function(d) { return +d.uCases; })])
+          .range([ height, 0 ]);
+        svg.append("g")
+          .call(d3.axisLeft(y));
+
+        // Add the line
+        svg.append("path")
+          .datum(sem_data)
+          .attr("fill", "none")
+          .attr("stroke", "steelblue")
+          .attr("stroke-width", 1.5)
+          .attr("d", d3.line()
+            .x(function(d) { return x(d.date) })
+            .y(function(d) { return y(d.uCases) })
+            )
+
+        var goodSemesterAnnote = [
+          {
+            note: {
+            label: "The university recorded most of its infections this semester due to the surge of highly contagious Omicron variant in the US starting around mid December.",
+            title: "Omicron's Rise"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["black"],
+            x: 0,
+            y: y(220),
+            dy: 0,
+            dx: 400
+          }
+        ]
+
+        var goodSemesterAnnotation = d3.annotation()
+                                      .annotations(goodSemesterAnnote)
+
+        svg.append("g").call(goodSemesterAnnotation)
+
+        var spring2022instbegin = d3.timeParse("%m/%d/%Y")("01/18/2022")
+
+        var spring2022instbeginAnnote = [
+          {
+            note: {
+            label: "",
+            title: "Instruction Begins"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(spring2022instbegin),
+            y: y(181),
+            dy: -30,
+            dx: 10
+          }
+        ]
+
+        var spring2022instbeginAnnotation = d3.annotation()
+                                      .annotations(spring2022instbeginAnnote)
+
+        svg.append("g").call(spring2022instbeginAnnotation)
+
+        var springbreakbegins = d3.timeParse("%m/%d/%Y")("03/12/2022")
+
+        var springbreakbeginsAnnote = [
+          {
+            note: {
+            label: "The university recorded exactly zero undergraduate cases on this day.",
+            title: "Spring Break Begins"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(springbreakbegins),
+            y: y(0),
+            dy: -20,
+            dx: -20
+          }
+        ]
+
+        var springbreakbeginsAnnotation = d3.annotation()
+                                      .annotations(springbreakbeginsAnnote)
+
+        svg.append("g").call(springbreakbeginsAnnotation)
+
+        var springbreakends = d3.timeParse("%m/%d/%Y")("03/20/2022")
+
+        var springbreakendsAnnote = [
+          {
+            note: {
+            label: "Infections rise following the Spring Break, although the students were required to take a test during the break.",
+            title: "Spring Break Ends"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(springbreakends),
+            y: y(20),
+            dy: -150,
+            dx: -20
+          }
+        ]
+
+        var springbreakendsAnnotation = d3.annotation()
+                                      .annotations(springbreakendsAnnote)
+
+        svg.append("g").call(springbreakendsAnnotation)
+
+        var spring2022instend = d3.timeParse("%m/%d/%Y")("05/05/2022")
+
+        var spring2022instendAnnote = [
+          {
+            note: {
+            label: "",
+            title: "Instruction Ends"
+            },
+            connector: {
+              end: "arrow",
+              type: "line",
+              lineType: "vertical"
+            },
+            color: ["red"],
+            x: x(spring2022instend),
+            y: y(26),
+            dy: -70,
+            dx: -10
+          }
+        ]
+
+        var spring2022instendAnnotation = d3.annotation()
+                                      .annotations(spring2022instendAnnote)
+
+        svg.append("g").call(spring2022instendAnnotation)
+
+      }
+
+    }
+
+    var slider = d3.select('#sem');
+        slider.on('change', function() {
+            console.log(this.value);
+            draw(this.value);
+        });
+
+});
 
 </script>
 
