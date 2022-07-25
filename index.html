@@ -22,6 +22,7 @@ var svg = d3.select('#viz').append("svg")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
+
 d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/illinois_covid_data.csv",
   function(d){
     return {date: d3.timeParse('%a %b %_d %H:%M:%S %Y')(d._time),
@@ -63,6 +64,21 @@ d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/i
         svg.append("g")
           .call(d3.axisLeft(y));
 
+        var bisect = d3.bisector(function(d){return d.date;}).left;
+
+        var focus = svg.append('g')
+          .append('circle')
+            .style("fill", "none")
+            .attr("stroke", "black")
+            .attr('r', 8.5)
+            .style("opacity", 0)
+
+        var focusText = svg.append('g')
+          .append('text')
+            .style("opacity", 0)
+            .attr("text-anchor", "left")
+            .attr("alignment-baseline", "middle")
+
         // Add the line
         svg.append("path")
           .datum(sem_data)
@@ -73,6 +89,39 @@ d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/i
             .x(function(d) { return x(d.date) })
             .y(function(d) { return y(d.uCases) })
             )
+
+        svg.append('rect')
+          .style("fill", "none")
+          .style("pointer-events", "all")
+          .attr('width', width)
+          .attr('height', height)
+          .on('mouseover', mouseover)
+          .on('mousemove', mousemove)
+          .on('mouseout', mouseout);
+
+          // What happens when the mouse move -> show the annotations at the right positions.
+        function mouseover() {
+          focus.style("opacity", 1)
+          focusText.style("opacity",1)
+        }
+
+        function mousemove() {
+          // recover coordinate we need
+          var x0 = x.invert(d3.mouse(this)[0]);
+          var i = bisect(sem_data, x0, 1);
+          selectedData = sem_data[i]
+          focus
+            .attr("cx", x(selectedData.date))
+            .attr("cy", y(selectedData.uCases))
+          focusText
+            .html('%Positivity Rate: '+d3.format('.2f')(selectedData.uPositivity))
+            .attr("x", x(selectedData.date)+15)
+            .attr("y", y(selectedData.uCases))
+          }
+        function mouseout() {
+          focus.style("opacity", 0)
+          focusText.style("opacity", 0)
+        }
 
         var emergencyOrders = d3.timeParse("%m/%d/%Y")("08/20/2020")
 
@@ -277,6 +326,21 @@ d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/i
         svg.append("g")
           .call(d3.axisLeft(y));
 
+        var bisect = d3.bisector(function(d){return d.date;}).left;
+
+        var focus = svg.append('g')
+          .append('circle')
+            .style("fill", "none")
+            .attr("stroke", "black")
+            .attr('r', 8.5)
+            .style("opacity", 0)
+
+        var focusText = svg.append('g')
+          .append('text')
+            .style("opacity", 0)
+            .attr("text-anchor", "left")
+            .attr("alignment-baseline", "middle")
+
         // Add the line
         svg.append("path")
           .datum(sem_data)
@@ -287,6 +351,39 @@ d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/i
             .x(function(d) { return x(d.date) })
             .y(function(d) { return y(d.uCases) })
             )
+
+        svg.append('rect')
+          .style("fill", "none")
+          .style("pointer-events", "all")
+          .attr('width', width)
+          .attr('height', height)
+          .on('mouseover', mouseover)
+          .on('mousemove', mousemove)
+          .on('mouseout', mouseout);
+
+          // What happens when the mouse move -> show the annotations at the right positions.
+        function mouseover() {
+          focus.style("opacity", 1)
+          focusText.style("opacity",1)
+        }
+
+        function mousemove() {
+          // recover coordinate we need
+          var x0 = x.invert(d3.mouse(this)[0]);
+          var i = bisect(sem_data, x0, 1);
+          selectedData = sem_data[i]
+          focus
+            .attr("cx", x(selectedData.date))
+            .attr("cy", y(selectedData.uCases))
+          focusText
+            .html('%Positivity Rate: '+d3.format('.2f')(selectedData.uPositivity))
+            .attr("x", x(selectedData.date)+15)
+            .attr("y", y(selectedData.uCases))
+          }
+        function mouseout() {
+          focus.style("opacity", 0)
+          focusText.style("opacity", 0)
+        }
 
         var goodSemesterAnnote = [
           {
@@ -463,6 +560,21 @@ d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/i
         svg.append("g")
           .call(d3.axisLeft(y));
 
+        var bisect = d3.bisector(function(d){return d.date;}).left;
+
+        var focus = svg.append('g')
+          .append('circle')
+            .style("fill", "none")
+            .attr("stroke", "black")
+            .attr('r', 8.5)
+            .style("opacity", 0)
+
+        var focusText = svg.append('g')
+          .append('text')
+            .style("opacity", 0)
+            .attr("text-anchor", "left")
+            .attr("alignment-baseline", "middle")
+
         // Add the line
         svg.append("path")
           .datum(sem_data)
@@ -473,6 +585,39 @@ d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/i
             .x(function(d) { return x(d.date) })
             .y(function(d) { return y(d.uCases) })
             )
+
+        svg.append('rect')
+          .style("fill", "none")
+          .style("pointer-events", "all")
+          .attr('width', width)
+          .attr('height', height)
+          .on('mouseover', mouseover)
+          .on('mousemove', mousemove)
+          .on('mouseout', mouseout);
+
+          // What happens when the mouse move -> show the annotations at the right positions.
+        function mouseover() {
+          focus.style("opacity", 1)
+          focusText.style("opacity",1)
+        }
+
+        function mousemove() {
+          // recover coordinate we need
+          var x0 = x.invert(d3.mouse(this)[0]);
+          var i = bisect(sem_data, x0, 1);
+          selectedData = sem_data[i]
+          focus
+            .attr("cx", x(selectedData.date))
+            .attr("cy", y(selectedData.uCases))
+          focusText
+            .html('%Positivity Rate: '+d3.format('.2f')(selectedData.uPositivity))
+            .attr("x", x(selectedData.date)+15)
+            .attr("y", y(selectedData.uCases))
+          }
+        function mouseout() {
+          focus.style("opacity", 0)
+          focusText.style("opacity", 0)
+        }
 
         var goodSemesterAnnote = [
           {
@@ -649,6 +794,21 @@ d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/i
         svg.append("g")
           .call(d3.axisLeft(y));
 
+        var bisect = d3.bisector(function(d){return d.date;}).left;
+
+        var focus = svg.append('g')
+          .append('circle')
+            .style("fill", "none")
+            .attr("stroke", "black")
+            .attr('r', 8.5)
+            .style("opacity", 0)
+
+        var focusText = svg.append('g')
+          .append('text')
+            .style("opacity", 0)
+            .attr("text-anchor", "left")
+            .attr("alignment-baseline", "middle")
+
         // Add the line
         svg.append("path")
           .datum(sem_data)
@@ -659,6 +819,39 @@ d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/i
             .x(function(d) { return x(d.date) })
             .y(function(d) { return y(d.uCases) })
             )
+
+        svg.append('rect')
+          .style("fill", "none")
+          .style("pointer-events", "all")
+          .attr('width', width)
+          .attr('height', height)
+          .on('mouseover', mouseover)
+          .on('mousemove', mousemove)
+          .on('mouseout', mouseout);
+
+          // What happens when the mouse move -> show the annotations at the right positions.
+        function mouseover() {
+          focus.style("opacity", 1)
+          focusText.style("opacity",1)
+        }
+
+        function mousemove() {
+          // recover coordinate we need
+          var x0 = x.invert(d3.mouse(this)[0]);
+          var i = bisect(sem_data, x0, 1);
+          selectedData = sem_data[i]
+          focus
+            .attr("cx", x(selectedData.date))
+            .attr("cy", y(selectedData.uCases))
+          focusText
+            .html('%Positivity Rate: '+d3.format('.2f')(selectedData.uPositivity))
+            .attr("x", x(selectedData.date)+15)
+            .attr("y", y(selectedData.uCases))
+          }
+        function mouseout() {
+          focus.style("opacity", 0)
+          focusText.style("opacity", 0)
+        }
 
         var goodSemesterAnnote = [
           {
@@ -788,13 +981,13 @@ d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/i
 
         svg.append("g").call(spring2022instendAnnotation)
 
+
       }
 
     }
 
     var slider = d3.select('#sem');
         slider.on('change', function() {
-            console.log(this.value);
             draw(this.value);
         });
 
