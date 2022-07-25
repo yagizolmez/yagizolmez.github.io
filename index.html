@@ -11,7 +11,7 @@
 
 <script>
 
-var margin = {top: 10, right: 30, bottom: 30, left: 60},
+var margin = {top: 30, right: 30, bottom: 30, left: 60},
     width = 1840 - margin.left - margin.right,
     height = 800 - margin.top - margin.bottom;
 
@@ -983,6 +983,13 @@ d3.csv("https://raw.githubusercontent.com/yagizolmez/yagizolmez.github.io/main/i
 
 
       }
+
+      svg.append('text')
+         .attr('text-anchor','start')
+         .attr('y',-5)
+         .attr('x',0)
+         .text('New Undergraduate Cases')
+         .style('fill','black')
 
     }
 
